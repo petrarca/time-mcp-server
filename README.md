@@ -8,7 +8,7 @@ This project uses `uv` for Python package management and `task` for running comm
 
 ### Prerequisites
 
-- Python 3.8 or higher
+- Python 3.12 or higher
 - [uv](https://github.com/astral-sh/uv) - Fast Python package installer and resolver
 - [Task](https://taskfile.dev/) - Task runner / build tool
 
@@ -110,19 +110,17 @@ The Time MCP Server can be easily connected to Claude Desktop since it now uses 
 ```json
 {
   "mcpServers": {
-    "timeServer": {
-      "command": "python",
+    "current-time": {
+      "command": "/path/to/uv",
       "args": [
-        "-m",
-        "time_mcp_server.main"
-      ],
-      "cwd": "/Users/yourusername/path/to/time-mcp-server"
+        "run", "--directory", "/path/to/time-mcp-server", "python", "-m", "time_mcp_server.main"
+      ]
     }
   }
 }
 ```
 
-Make sure to replace the `cwd` path with the actual path to your project directory.
+Make sure to replace `/path/to/uv` with the path to your uv executable and `/path/to/time-mcp-server` with the actual path to your project directory.
 
 5. Save the configuration file and restart Claude Desktop
 6. You should see a hammer icon in the bottom right corner of Claude's input box
@@ -132,6 +130,21 @@ Now you can ask Claude to use your time tools, such as:
 - "What's the current time?"
 - "Can you tell me the current date in YYYY-MM-DD format?"
 - "What day of the week is it today?"
+
+## Project Structure
+
+The project is organized with the following structure:
+
+```
+src/time_mcp_server/
+├── __init__.py       # Package initialization
+├── main.py          # Command-line interface and entry point
+├── server.py        # MCP server configuration
+└── tools.py         # Time tool implementations
+
+tests/
+└── test_client.py   # Tests for the time tools
+```
 
 ## Development
 
@@ -146,7 +159,7 @@ The project includes tests that demonstrate how to use the Time MCP Server as a 
 ```python
 # Example of using the FastMCP client to connect to the server
 from fastmcp import Client
-from time_mcp_server.server import mcp
+from time_mcp_server.server import mcp  # Import the MCP server instance
 
 async with Client(mcp) as client:
     # List available tools
