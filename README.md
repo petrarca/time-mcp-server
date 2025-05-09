@@ -79,7 +79,8 @@ from fastmcp import Client
 
 async def main():
     # Connect to the Time MCP Server
-    async with Client("http://localhost:8090") as client:
+    # Make sure to include the /mcp path in the URL
+    async with Client("http://localhost:8090/mcp") as client:
         # Get the current time
         result = await client.call_tool("get_current_time", {"date_format": "%Y-%m-%d %H:%M:%S"})
         # Parse the JSON response
@@ -110,19 +111,17 @@ The Time MCP Server can be easily connected to Claude Desktop since it now uses 
 ```json
 {
   "mcpServers": {
-    "timeServer": {
-      "command": "python",
+    "current-time": {
+      "command": "/path/to/uv",
       "args": [
-        "-m",
-        "time_mcp_server.main"
-      ],
-      "cwd": "/Users/yourusername/path/to/time-mcp-server"
+        "run", "--directory", "/path/to/time-mcp-server", "python", "-m", "time_mcp_server.main"
+      ]
     }
   }
 }
 ```
 
-Make sure to replace the `cwd` path with the actual path to your project directory.
+Make sure to replace `/path/to/uv` with the path to your uv executable and `/path/to/time-mcp-server` with the actual path to your project directory.
 
 5. Save the configuration file and restart Claude Desktop
 6. You should see a hammer icon in the bottom right corner of Claude's input box

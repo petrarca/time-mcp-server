@@ -30,7 +30,8 @@ def main(port: int, transport: str) -> None:
         # For HTTP transport, it's safe to print to stderr
         print(f"Starting Time MCP Server on port {port} with streamable-http transport...", file=sys.stderr)
         # Run the MCP server with streamable-http transport
-        mcp.run(transport="streamable-http", host="0.0.0.0", port=port)
+        # Make sure to set the path to '/mcp' to handle requests at the correct URL
+        mcp.run(transport="streamable-http", host="0.0.0.0", port=port, path="/mcp")
 
 
 if __name__ == "__main__":
