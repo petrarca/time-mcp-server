@@ -2,9 +2,9 @@ version: '3'
 
 tasks:
   setup:
-    desc: Create a Python virtual environment
+    desc: Create a Python virtual environment with Python 3.12
     cmds:
-      - uv venv
+      - uv venv --python=3.12
 
   install:
     desc: Install the package in development mode
@@ -30,4 +30,18 @@ tasks:
   run:
     desc: Run the application
     cmds:
-      - .venv/bin/python -m time_mcp_server.main
+      - .venv/bin/python -m time_mcp_server.main {{.CLI_ARGS}}
+
+  clean:
+    desc: Clean up temporary files and build artifacts
+    cmds:
+      - rm -rf build/ dist/ .pytest_cache/ .ruff_cache/ **/__pycache__/ **/*.egg-info/
+      - find . -type d -name __pycache__ -exec rm -rf {} +
+      - find . -type f -name "*.pyc" -delete
+
+  fct:
+    desc: Run format, check, and test tasks in sequence
+    cmds:
+      - task: format
+      - task: check
+      - task: test
