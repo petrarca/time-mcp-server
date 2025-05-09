@@ -79,7 +79,8 @@ from fastmcp import Client
 
 async def main():
     # Connect to the Time MCP Server
-    async with Client("http://localhost:8090") as client:
+    # Make sure to include the root path '/' in the URL
+    async with Client("http://localhost:8090/") as client:
         # Get the current time
         result = await client.call_tool("get_current_time", {"date_format": "%Y-%m-%d %H:%M:%S"})
         # Parse the JSON response
