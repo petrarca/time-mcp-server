@@ -64,10 +64,13 @@ The Time MCP Server provides the following tools for LLMs:
 1. **get_current_time** - Get the current date and time
    - Parameters:
      - `date_format` (optional): Format string for the datetime (e.g., '%Y-%m-%d %H:%M:%S')
-   - Returns: A dictionary with the current time in ISO format and the requested format
+     - `timezone` (optional): Timezone name (e.g., 'Europe/Berlin', 'America/New_York'). Default is 'Europe/Berlin'
+   - Returns: A dictionary with the current time in ISO format, the requested format, and the timezone used
 
 2. **get_time_components** - Get the components of the current time
-   - Returns: A dictionary with year, month, day, hour, minute, second, microsecond, and weekday
+   - Parameters:
+     - `timezone` (optional): Timezone name (e.g., 'Europe/Berlin', 'America/New_York'). Default is 'Europe/Berlin'
+   - Returns: A dictionary with year, month, day, hour, minute, second, microsecond, weekday, and timezone
 
 ### Example Client Usage
 
@@ -82,18 +85,18 @@ async def main():
     # Make sure to include the root path '/' in the URL
     async with Client("http://localhost:8090/") as client:
         # Get the current time
-        result = await client.call_tool("get_current_time", {"date_format": "%Y-%m-%d %H:%M:%S"})
+        result = await client.call_tool("get_current_time", {"date_format": "%Y-%m-%d %H:%M:%S", "timezone": "America/New_York"})
         # Parse the JSON response
         import json
         time_data = json.loads(result[0].text)
         print(time_data)
-        # Output: {'iso_time': '2025-05-09T16:27:31.123456', 'formatted_time': '2025-05-09 16:27:31'}
+        # Output: {'iso_time': '2025-05-09T10:27:31.123456-04:00', 'formatted_time': '2025-05-09 10:27:31', 'timezone': 'America/New_York'}
         
         # Get time components
-        result = await client.call_tool("get_time_components")
+        result = await client.call_tool("get_time_components", {"timezone": "Europe/Berlin"})
         components = json.loads(result[0].text)
         print(components)
-        # Output: {'year': 2025, 'month': 5, 'day': 9, 'hour': 16, 'minute': 27, 'second': 31, 'microsecond': 123456, 'weekday': 4}
+        # Output: {'year': 2025, 'month': 5, 'day': 9, 'hour': 16, 'minute': 27, 'second': 31, 'microsecond': 123456, 'weekday': 4, 'timezone': 'Europe/Berlin'}
 
 # Run the async client
 asyncio.run(main())
@@ -131,6 +134,8 @@ Now you can ask Claude to use your time tools, such as:
 - "What's the current time?"
 - "Can you tell me the current date in YYYY-MM-DD format?"
 - "What day of the week is it today?"
+- "What time is it in New York right now?"
+- "What's the current time in Tokyo timezone?"
 
 ## Project Structure
 
@@ -167,7 +172,7 @@ async with Client(mcp) as client:
     tools = await client.list_tools()
     
     # Call the get_current_time tool
-    result = await client.call_tool("get_current_time", {"date_format": "%Y-%m-%d %H:%M:%S"})
+    result = await client.call_tool("get_current_time", {"date_format": "%Y-%m-%d %H:%M:%S", "timezone": "Europe/Berlin"})
     text_content = result[0]
     
     # Parse the JSON response
